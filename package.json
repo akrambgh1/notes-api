@@ -1,0 +1,21 @@
+{
+  "name": "notes-api",
+  "version": "1.0.0",
+  "description": "NoteVault: a REST API with JWT authentication and a notes app (Node.js, Express, SQLite)",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js",
+    "dev": "node --watch --disable-warning=ExperimentalWarning server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/*.test.js\""
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "express": "4.21.2",
+    "jsonwebtoken": "9.0.2"
+  },
+  "license": "MIT"
+}

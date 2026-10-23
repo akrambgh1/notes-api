@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoteVault — Secure Notes</title>
+  <meta name="description" content="A notes app powered by a REST API with JWT authentication.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🗒️%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Auth screen -->
+  <section id="authView" class="auth" hidden>
+    <div class="auth-card">
+      <div class="auth-brand"><span class="logo">🗒️</span> NoteVault</div>
+      <p class="muted center">Your notes, protected by a real API with JWT login.</p>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-mode="login" role="tab" aria-selected="true">Log in</button>
+        <button class="tab" data-mode="register" role="tab" aria-selected="false">Sign up</button>
+      </div>
+
+      <form id="authForm" novalidate>
+        <label class="field" id="nameField" hidden>
+          <span>Name</span>
+          <input name="name" autocomplete="name" placeholder="Your name">
+          <small class="field-error" data-for="name"></small>
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input name="email" type="email" autocomplete="email" placeholder="you@example.com">
+          <small class="field-error" data-for="email"></small>
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input name="password" type="password" autocomplete="current-password" placeholder="At least 8 characters, with a number">
+          <small class="field-error" data-for="password"></small>
+        </label>
+        <p id="authError" class="error" role="alert" hidden></p>
+        <button class="btn primary wide" type="submit" id="authSubmit">Log in</button>
+      </form>
+      <p class="tiny muted center">Passwords are hashed with bcrypt and never stored in plain text.</p>
+    </div>
+  </section>
+
+  <!-- Notes app -->
+  <div id="appView" class="app" hidden>
+    <header class="topbar">
+      <div class="brand"><span class="logo">🗒️</span> NoteVault</div>
+      <input id="search" class="search" type="search" placeholder="Search notes…" aria-label="Search notes">
+      <div class="user-menu">
+        <button id="userBtn" class="user-btn" aria-haspopup="true" aria-expanded="false">
+          <span id="userInitial" class="avatar"></span>
+          <span id="userName" class="user-name"></span>
+        </button>
+        <div id="userMenu" class="menu" hidden>
+          <div class="menu-info"><strong id="menuName"></strong><span id="menuEmail" class="muted"></span><span id="menuStats" class="muted"></span></div>
+          <button id="logoutBtn" class="menu-item">↩ Log out</button>
+          <button id="deleteAccountBtn" class="menu-item danger">🗑️ Delete account</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <form id="quickForm" class="quick" autocomplete="off">
+        <input id="quickTitle" placeholder="Take a note…" maxlength="120" aria-label="New note title">
+        <textarea id="quickContent" placeholder="Write something…" rows="3" hidden aria-label="New note content"></textarea>
+        <div id="quickActions" class="quick-actions" hidden>
+          <input id="quickTags" placeholder="Tags, separated by commas" aria-label="Tags">
+          <button type="button" class="btn ghost sm" id="quickCancel">Cancel</button>
+          <button type="submit" class="btn primary sm">Add note</button>
+        </div>
+      </form>
+
+      <div id="tagBar" class="tag-bar"></div>
+
+      <div id="status" class="status" role="status"></div>
+      <section id="pinnedSection" hidden>
+        <h2 class="section-title">📌 Pinned</h2>
+        <div id="pinnedGrid" class="grid"></div>
+      </section>
+      <section id="othersSection">
+        <h2 class="section-title" id="othersTitle" hidden>Others</h2>
+        <div id="notesGrid" class="grid"></div>
+      </section>
+      <div id="empty" class="empty" hidden>
+        <span>🗒️</span>
+        <p>No notes yet. Write your first one above!</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit dialog -->
+  <dialog id="editDialog" class="dialog">
+    <form id="editForm" method="dialog">
+      <input id="editTitle" class="edit-title" maxlength="120" placeholder="Title" aria-label="Title">
+      <textarea id="editContent" class="edit-content" rows="10" placeholder="Note" aria-label="Content"></textarea>
+      <input id="editTags" class="edit-tags" placeholder="Tags, separated by commas" aria-label="Tags">
+      <div class="colors" id="editColors" role="radiogroup" aria-label="Color"></div>
+      <p id="editError" class="error" hidden></p>
+      <div class="dialog-actions">
+        <button type="button" id="editDelete" class="btn danger sm">Delete</button>
+        <span class="muted tiny" id="editMeta"></span>
+        <span class="spacer"></span>
+        <button type="button" id="editCancel" class="btn ghost sm">Cancel</button>
+        <button type="submit" value="save" class="btn primary sm">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script src="app.js" type="module"></script>
+</body>
+</html>
