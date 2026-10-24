@@ -7,6 +7,8 @@ NoteVault is a full-stack notes app built around a clean, tested **REST API**. U
 **Tests:** 18 integration tests with `node:test`, run on both SQLite and Postgres (via PGlite)
 **Hosting:** Vercel (serverless) + Neon Postgres
 
+**🔗 Live demo:** https://notes-api-omega-tawny.vercel.app/
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/akrambgh1/notes-api&env=JWT_SECRET&envDescription=Any%20long%20random%20string%20used%20to%20sign%20login%20tokens)
 
 ## ✨ Features
