@@ -6,6 +6,8 @@ NoteVault is a full-stack notes app built around a clean, tested **REST API**. U
 **Frontend:** vanilla JavaScript, HTML and CSS (no framework)
 **Tests:** 9 integration tests with the built-in `node:test` runner
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/akrambgh1/notes-api)
+
 ## ✨ Features
 
 ### API
