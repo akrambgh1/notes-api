@@ -2,11 +2,12 @@
 
 NoteVault is a full-stack notes app built around a clean, tested **REST API**. Users sign up and log in with **JWT authentication**, then create, search, tag, color and pin their notes. Each user can only ever see their own data.
 
-**Backend:** Node.js, Express, SQLite (Node's built-in `node:sqlite`), bcrypt, JSON Web Tokens
+**Backend:** Node.js, Express, **Postgres** (Neon) in production and **SQLite** (built-in `node:sqlite`) locally, bcrypt, JSON Web Tokens
 **Frontend:** vanilla JavaScript, HTML and CSS (no framework)
-**Tests:** 9 integration tests with the built-in `node:test` runner
+**Tests:** 18 integration tests with `node:test`, run on both SQLite and Postgres (via PGlite)
+**Hosting:** Vercel (serverless) + Neon Postgres
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/akrambgh1/notes-api)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/akrambgh1/notes-api&env=JWT_SECRET&envDescription=Any%20long%20random%20string%20used%20to%20sign%20login%20tokens)
 
 ## ✨ Features
 
@@ -44,7 +45,8 @@ Optional environment variables:
 |----------|---------|---------|
 | `PORT` | `4000` | Server port |
 | `JWT_SECRET` | random in dev | Secret for signing tokens (**required** in production) |
-| `DB_PATH` | `data/notevault.db` | SQLite file location (`:memory:` for a temporary DB) |
+| `DATABASE_URL` | none | A `postgres://` URL uses Postgres (e.g. Neon) |
+| `DB_PATH` | `data/notevault.db` | SQLite file used when there's no `DATABASE_URL` (`:memory:` for a temporary DB) |
 
 ## 📖 API Reference
 
@@ -86,24 +88,31 @@ Errors look like this:
 { "error": "Validation failed", "details": { "password": "Password must be at least 8 characters" } }
 ```
 
-## ☁️ Deploy for free (Render)
+## ☁️ Deploy for free (Vercel + Neon)
 
-1. Create a free account at [render.com](https://render.com) and connect your GitHub.
-2. Choose **New → Blueprint** and pick this repository. `render.yaml` sets Node 22, production mode and a random `JWT_SECRET` for you.
-3. The free plan has no persistent disk, so the database resets on each redeploy. For permanent data, attach a disk (paid) or switch to a hosted database.
+1. Click **Deploy with Vercel** above (or import the repo at vercel.com/new) and set `JWT_SECRET` to any long random string.
+2. In the Vercel project, open **Storage → Create Database → Neon (Postgres)** and connect it. This adds `DATABASE_URL` automatically.
+3. **Redeploy**. The tables are created automatically on the first request.
+
+Static files in `public/` are served by Vercel's CDN, and `/api/*` runs as a serverless function (`api/index.js`, routed by `vercel.json`).
+
+## 🗄️ One codebase, two databases
+
+`src/db.js` exposes a tiny `all()` / `get()` interface. Queries are written once with `?` placeholders and converted to `$1, $2…` for Postgres. You get SQLite with zero setup locally, and Postgres in production. The test suite runs against **both** (Postgres via [PGlite](https://pglite.dev), a real Postgres compiled to WebAssembly).
 
 ## 📂 Project Structure
 
 ```
 notes-api/
-├── server.js            # Starts the server, reads env vars
+├── server.js            # Local server, reads env vars
+├── api/index.js         # Vercel serverless entry
+├── vercel.json          # Routes /api/* to the function
 ├── src/
 │   ├── app.js           # Express app: routes, auth middleware, validation, errors
-│   └── db.js            # SQLite schema
+│   └── db.js            # SQLite / Postgres adapter + schema
 ├── test/
-│   └── api.test.js      # Integration tests (node:test + fetch)
-├── public/              # Frontend (HTML, CSS, JS)
-└── render.yaml          # Free hosting config
+│   └── api.test.js      # Integration tests on SQLite and Postgres
+└── public/              # Frontend (HTML, CSS, JS)
 ```
 
 ## 📚 What I Learned

@@ -4,7 +4,9 @@ import { createApp } from "./src/app.js";
 import { openDb } from "./src/db.js";
 
 const PORT = process.env.PORT || 4000;
-const DB_PATH = process.env.DB_PATH || fileURLToPath(new URL("./data/notevault.db", import.meta.url));
+// A postgres:// URL uses Postgres (e.g. Neon); otherwise a local SQLite file
+const DB_URL =
+  process.env.DATABASE_URL || process.env.DB_PATH || fileURLToPath(new URL("./data/notevault.db", import.meta.url));
 
 let secret = process.env.JWT_SECRET;
 if (!secret) {
@@ -17,7 +19,7 @@ if (!secret) {
   console.warn("JWT_SECRET is not set, using a random development secret.");
 }
 
-const app = createApp({ db: openDb(DB_PATH), jwtSecret: secret });
+const app = createApp({ database: openDb(DB_URL), jwtSecret: secret });
 
 app.listen(PORT, () => {
   console.log(`NoteVault API running on http://localhost:${PORT}`);
